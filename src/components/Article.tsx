@@ -12,16 +12,13 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination"
+import Heading from './Heading'
 
 const Article = () => {
     return (
         <section className='relative pb-20'>
             <div className='md:max-w-[82%] max-w-[95%] mx-auto'>
-                <div className='flex flex-col lg:items-start gap-4 mb-14 items-center'>
-                    <h2 className='text-4xl'>Latest articles 🎈</h2>
-                    <p className='dark:text text-lg text-center lg:text-start'>Discover the most outstanding articles ins all topics of life.</p>
-                    <DropdownMenuSeparator className='bg-slate-400 w-full h-[0.5px] ' />
-                </div>
+                <Heading heading='Latest articles 🎈' para='Discover the most outstanding articles ins all topics of life.' />
                 <div className='grid md:grid-cols-2 grid-cols-1 gap-4'>
                     {
                         Array.from({ length: 8 }).map((_, id) => {
@@ -45,13 +42,13 @@ const Article = () => {
                 <Pagination className='mt-10'>
                     <PaginationContent className='text-xl' >
                         <PaginationItem>
-                            <PaginationPrevious href="#" className='text-xl'/>
+                            <PaginationPrevious href="#" className='text-xl' />
                         </PaginationItem>
                         <PaginationItem>
                             <PaginationEllipsis />
                         </PaginationItem>
                         <PaginationItem >
-                            <PaginationNext href="#" className='text-xl'/>
+                            <PaginationNext href="#" className='text-xl' />
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>

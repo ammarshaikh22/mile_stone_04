@@ -49,7 +49,7 @@ const Header = () => {
                                         <ul className='flex gap-6 text-lg dark:text-white items-start flex-col text-black'>
                                             <Link href='/'><li>Home</li></Link>
                                             <Link href='/'><li>All Post</li></Link>
-                                            <Link href='/'><li>Contact</li></Link>
+                                            <Link href='/contact'><li>Contact</li></Link>
                                         </ul>
                                     </SheetDescription>
                                 </SheetHeader>
@@ -65,8 +65,10 @@ const Header = () => {
                     <div className='flex justify-between items-center gap-2'>
                         <div className='lg:block hidden w-full '>
                             <Menu setActive={setActive} className='text-sm'>
-                                <MenuItem setActive={setActive} active={active} item="Home">
-                                </MenuItem>
+                                <Link href='/'>
+                                    <MenuItem setActive={setActive} active={active} item="Home">
+                                    </MenuItem>
+                                </Link>
                                 <MenuItem setActive={setActive} active={active} item="All Post" >
                                     <div className="text-sm grid grid-cols-3 gap-10 p-4">
                                         {
@@ -84,8 +86,10 @@ const Header = () => {
                                         }
                                     </div>
                                 </MenuItem>
-                                <MenuItem setActive={setActive} active={active} item="ContactUs">
-                                </MenuItem>
+                                <Link href='/contact'>
+                                    <MenuItem setActive={setActive} active={active} item="ContactUs">
+                                    </MenuItem>
+                                </Link>
                             </Menu>
                         </div>
                         <div>

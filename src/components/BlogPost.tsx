@@ -1,16 +1,13 @@
 import Image from 'next/image'
 import React from 'react'
 import { DropdownMenuSeparator } from './ui/dropdown-menu'
+import Heading from './Heading'
 
 const BlogPost = () => {
     return (
         <section className='relative '>
             <div className='md:max-w-[82%] max-w-[95%] mx-auto'>
-                <div className='flex flex-col lg:items-start gap-4 mb-14 items-center'>
-                    <h2 className='text-4xl'>The latest posts</h2>
-                    <p className='dark:text text-lg text-center lg:text-start'>Discover the most outstanding articles on all topics of life.</p>
-                    <DropdownMenuSeparator className='bg-slate-400 w-full h-[0.5px] ' />
-                </div>
+                <Heading heading='The latest posts 🎈' para='Discover the most outstanding Posts on all topics of life.' />
                 <div className='grid lg:grid-cols-[482px_1fr] grid-cols-1 grid-rows-[187px_1fr] gap-6 '>
                     <div className='col-span-1 row-span-3 relative h-full'>
                         <div className='flex flex-col gap-8 lg:items-start items-center'>

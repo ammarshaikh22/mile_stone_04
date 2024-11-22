@@ -11,9 +11,9 @@ const Banner = () => {
                     <div className="absolute inset-0 bg-black opacity-50 rounded-[40px]" />
                     <div className="relative z-10 flex h-full items-start md:p-14 p-6 flex-col md:max-w-[80%] max-w-[95%]">
                         <h1 className="text-white md:text-4xl text-2xl font-bold md:mb-6 mb-4">
-                            Take a 3D tour through a Microsoft datacenter?
+                            Your Daily Dose of Inspiration and Knowledge
                         </h1>
-                        <p className='line-clamp-2 text-gray-300'>Immerse yourself in the world of literature with our curated collection of books. From bestsellers to hidden gems, our assortment caters to a variety of interests...</p>
+                        <p className='line-clamp-3 text-gray-300'>Stay inspired and informed with fresh ideas, stories, and perspectives delivered daily. Dive into topics that spark curiosity, ignite creativity, and expand your knowledge. This is your space to explore, learn, and grow</p>
                         <Button size={'lg'} variant="destructive" className='bg-[#0D9488] md:mt-8 mt-6'>Read more</Button>
                     </div>
                     <div className='lg:absolute mt-6 lg:mt-0 lg:-bottom-24 lg:left-1/2 lg:-translate-x-1/2 flex justify-between items-center gap-8 lg:flex-row flex-col'>
