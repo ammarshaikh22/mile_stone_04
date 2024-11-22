@@ -19,7 +19,7 @@
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
+    --border: black;
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
     --chart-1: 12 76% 61%;
@@ -30,7 +30,7 @@
     --radius: 0.5rem
   }
   .dark {
-    --background: 240 10% 3.9%;
+    --background:223, 27%, 15%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
@@ -62,5 +62,30 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+
+::-webkit-scrollbar {
+  width: 8px; 
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #111827;
+  border-radius: 6px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #374151; 
+}
+
+@layer utilities{
+  .text{
+    @apply text-[#D1D5DB]
   }
 }
