@@ -1,6 +1,7 @@
 import React from 'react'
 import { DropdownMenuSeparator } from './ui/dropdown-menu'
 import Image from 'next/image'
+import { animationFooter } from '@/helper/AllAnimations'
 const Footer = () => {
     return (
         <footer className='relative pt-6'>

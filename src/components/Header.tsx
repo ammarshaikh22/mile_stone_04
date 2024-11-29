@@ -130,7 +130,7 @@ const Header = () => {
                                                         <DropdownMenuSeparator className='border border-gray-500' />
                                                         <li>Theme Modes <ModeToggle /></li>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
-                                                        <Link href='/'><li>LogOut</li></Link>
+                                                        <Link href='/signup'><li>Signup</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
                                                     </ul>
                                                 </SheetDescription>

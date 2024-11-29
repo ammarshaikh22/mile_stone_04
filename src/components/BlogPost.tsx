@@ -1,15 +1,20 @@
+'use client'
 import Image from 'next/image'
-import React from 'react'
-import { DropdownMenuSeparator } from './ui/dropdown-menu'
+import React, { useEffect } from 'react'
 import Heading from './Heading'
-
+import { animateBlogCards } from '../helper/AllAnimations'
 const BlogPost = () => {
+    useEffect(() => {
+        const cards = document.querySelectorAll('#blog-card');
+        const card2 = document.querySelector('#blog-card2');
+        animateBlogCards(cards, card2);
+    })
     return (
         <section className='relative '>
             <div className='md:max-w-[82%] max-w-[95%] mx-auto'>
-                <Heading heading='The latest posts 🎈' para='Discover the most outstanding Posts on all topics of life.' />
+                <Heading id='blog-title' heading='The latest posts 🎈' para='Discover the most outstanding Posts on all topics of life.' />
                 <div className='grid lg:grid-cols-[482px_1fr] grid-cols-1 grid-rows-[187px_1fr] gap-6 '>
-                    <div className='col-span-1 row-span-3 relative h-full'>
+                    <div id='blog-card2' className='col-span-1 row-span-3 relative h-full'>
                         <div className='flex flex-col gap-8 lg:items-start items-center'>
                             <Image src="/blog1.webp" alt="image" width={482} height={395} className='rounded-3xl h-[400px]' />
                             <div className='flex flex-col gap-4'>
@@ -26,7 +31,7 @@ const BlogPost = () => {
                     {
                         Array.from({ length: 3 }).map((_, id: any) => {
                             return (
-                                <div className='col-span-1 row-span-1' key={id}>
+                                <div id='blog-card' className='col-span-1 row-span-1' key={id}>
                                     <div className='flex items-center justify-center md:gap-4 gap-2'>
                                         <div className='flex flex-col md:gap-4 gap-2'>
                                             <h3 className=' text-md'>360-degree video: How Microsoft deployed</h3>
