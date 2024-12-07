@@ -15,7 +15,7 @@ export default function Home() {
     }
   }, []);
   return (
-    <main className="2xl:max-w-[1536px] mx-auto" data-scroll-container>
+    <main className="2xl:max-w-[1536px] mx-auto over" data-scroll-container>
       <Banner data-scroll />
       <About data-scroll />
       <BlogPost data-scroll />

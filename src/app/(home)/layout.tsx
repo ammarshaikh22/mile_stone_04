@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning >
       <body
-        className={`${poppins.className} antialiased scroll-smooth overflow-hidden`}
+        className={`${poppins.className} antialiased scroll-smooth `}
       >
         <ThemeProvider
           attribute="class"

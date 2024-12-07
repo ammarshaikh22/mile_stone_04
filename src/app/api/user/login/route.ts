@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
       const request = await req.json()
       const { email, password } = request
       if (!email && !password) {
-         return NextResponse.json({ message: "invalid credentials" }, { status: 404 })
+         return NextResponse.json({ message: "invalid credentials" }, { status: 400 })
       }
       const user = await User.findOne({ email })
       if (!user) {
@@ -18,9 +18,9 @@ export const POST = async (req: NextRequest) => {
       }
       const MatchDecodePass = await bcryptjs.compare(password, user.password)
       if (!MatchDecodePass) {
-         return NextResponse.json({ message: "password not matched" }, { status: 404 })
+         return NextResponse.json({ message: "password not matched" }, { status: 402 })
       } else if (!user.isVerified) {
-         return NextResponse.json({ message: "please verify your email" }, { status: 404 })
+         return NextResponse.json({ message: "please verify your email" }, { status: 401 })
       }
       const dataToken = {
          id: user._id
