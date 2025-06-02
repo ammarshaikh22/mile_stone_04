@@ -29,13 +29,13 @@ export function DashboardSidebar() {
   return (
     <>
       {isMobile && (
-        <div className="flex items-center h-14 px-4 border-b bg-background">
+        <div className="flex items-center h-14 px-4 border-b ">
           <SidebarTrigger />
           <div className="ml-4 font-semibold">Dashboard</div>
         </div>
       )}
       <Sidebar>
-        <SidebarHeader className="flex items-center px-4 py-2">
+        <SidebarHeader className="flex items-start px-6 py-6">
           <div className="flex items-center gap-2">
             <div className="size-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold">
               D
@@ -59,14 +59,6 @@ export function DashboardSidebar() {
                 <Link href="/dashboard/posts">
                   <FileText className="h-4 w-4" />
                   <span>Posts</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={isActive("/dashboard/analytics")}>
-                <Link href="/dashboard/analytics">
-                  <BarChart3 className="h-4 w-4" />
-                  <span>Analytics</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
