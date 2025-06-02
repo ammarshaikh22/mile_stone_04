@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import axios from "axios";
 function Signup() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -14,20 +15,21 @@ function Signup() {
   const route = useRouter()
   const [loader, setLoader] = useState(false)
   const signUp = async () => {
-    if (!name || !email || !password) return
-    setLoader(true)
-    await fetch('/api/user/signup', {
-      method: 'POST',
-      body: JSON.stringify({ name: name, email: email, password: password }),
-    })
-    route.push('/login')
+    try {
+      if (!name || !email || !password) return
+      setLoader(true)
+      const res = await axios.post('http://localhost:8000/api/v1/signup', {
+        name,
+        email,
+        password,
+      })
+      if (res.status === 200) return route.push('/login')
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoader(false)
+    }
   }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
-
   return (
     <>
       {
@@ -46,7 +48,7 @@ function Signup() {
             </div>
             <h2 className="text-3xl font-bold text-white mb-2 text-center">Create an account</h2>
             <p className="dark:text text-md text-center">Enter your email below to create your account.</p>
-            <form className="my-8" onSubmit={handleSubmit}>
+            <div className="my-8" >
               <LabelInputContainer className="mb-6">
                 <Label htmlFor="firstname">Name</Label>
                 <Input
@@ -86,7 +88,7 @@ function Signup() {
                 <BottomGradient />
               </button>
               <p className='text-sm text-white mt-6 text-center'>Already have an account <Link href='/login'>Login</Link></p>
-            </form>
+            </div>
           </div>
       }
     </>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html>
+    <html lang='en' suppressHydrationWarning >
       <body>
         {children}
         <AnimatedCursor

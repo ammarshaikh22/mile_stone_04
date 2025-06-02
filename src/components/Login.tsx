@@ -13,22 +13,34 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [loader, setLoader] = useState(false)
     const route = useRouter()
-    const login = async (e: any) => {
-        e.perventDefault()
+
+    const login = async () => {
         try {
-            if (!email || !password) return
+            if (!email || !password) {
+                alert('Please enter email and password')
+                return
+            }
             setLoader(true)
-            const req = await axios.post('/api/user/login', { email, password })
-            route.push('/')
+            const res = await axios.post('http://localhost:8000/api/v1/login', { email, password })
+            console.log(res)
+            localStorage.setItem('token', res.data.token)
+            if (res.status === 200) return route.push('/')
         } catch (error: any) {
-            alert(error.message)
-            console.log(error.message);
+            if (error.response.data.message === 'please verify your email') {
+                alert(error.response.data.message)
+                route.push('/verifyemail')
+            } else if (error.response.data.message === 'user not found') {
+                alert(error.response.data.message)
+                route.push('/signup')
+            } else {
+                alert(error.response.data.message)
+            }
         } finally {
             setLoader(false)
         }
     }
     return (
-        <>
+        <div>
             {
                 loader ?
                     <div className='flex justify-center items-center h-screen'>
@@ -44,7 +56,7 @@ const Login = () => {
                         </div>
                         <h2 className="text-3xl font-bold text-white mb-2 text-center">Login to your account</h2>
                         <p className='dark:text text-md text-center mb-2'>Enter your email below to Login to your account</p>
-                        <form className="my-8" >
+                        <form onClick={(e) => e.preventDefault()} className="my-8" >
                             <LabelInputContainer className="mb-6">
                                 <Label htmlFor="email">Email Address</Label>
                                 <Input
@@ -77,7 +89,7 @@ const Login = () => {
                         </form>
                     </div>
             }
-        </>
+        </div>
     )
 }
 

@@ -18,11 +18,13 @@ export const MenuItem = ({
   active,
   item,
   children,
+  link
 }: {
   setActive: (item: string) => void;
   active: string | null;
   item: string;
   children?: React.ReactNode;
+  link?: string;
 }) => {
   return (
     <div onMouseEnter={() => setActive(item)} className="relative ">

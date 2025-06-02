@@ -1,14 +1,7 @@
-'use client'
 import Image from 'next/image'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Heading from './Heading'
-import { animateBlogCards } from '../helper/AllAnimations'
 const BlogPost = () => {
-    useEffect(() => {
-        const cards = document.querySelectorAll('#blog-card');
-        const card2 = document.querySelector('#blog-card2');
-        animateBlogCards(cards, card2);
-    })
     return (
         <section className='relative '>
             <div className='md:max-w-[82%] max-w-[95%] mx-auto'>
@@ -29,20 +22,22 @@ const BlogPost = () => {
                         </div>
                     </div>
                     {
-                        Array.from({ length: 3 }).map((_, id: any) => {
+                        [1, 2, 3, 4].map((_, id) => {
                             return (
                                 <div id='blog-card' className='col-span-1 row-span-1' key={id}>
                                     <div className='flex items-center justify-center md:gap-4 gap-2'>
                                         <div className='flex flex-col md:gap-4 gap-2'>
-                                            <h3 className=' text-md'>360-degree video: How Microsoft deployed</h3>
-                                            <p className='dark:text text-sm md:line-clamp-3 line-clamp-1'>Immerse yourself in the world of literature with our curated collection of books. From bestsellers to hidden gems, our assortment caters to a variety of interests and genres.</p>
+                                            <h3 className=' text-md'>360 degree podcast post</h3>
+                                            <p className='dark:text text-sm md:line-clamp-3 line-clamp-1'>
+                                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reprehenderit odit quisquam quibusdam, nobis rerum nulla natus pariatur ullam eveniet sapiente.
+                                            </p>
                                             <div className='md:flex gap-2 items-center hidden'>
                                                 <Image src='/avator.webp' alt="image" width={50} height={50} className='rounded-full object-cover' />
                                                 <span className='text-sm'>Moderation</span>
                                                 <span className='text-sm'>Aug 24, 2023</span>
                                             </div>
                                         </div>
-                                        <Image src="/blog2.webp" alt="image" width={400} height={187} className='rounded-3xl md:h-[187px] md:min-w-[160px] w-[400px] h-[88px]' />
+                                        <Image src='/blog2.webp' alt="image" width={400} height={187} className='rounded-3xl md:h-[187px] md:min-w-[160px] w-[400px] h-[88px]' />
                                     </div>
                                 </div>
                             )

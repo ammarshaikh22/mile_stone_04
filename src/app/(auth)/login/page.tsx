@@ -1,5 +1,4 @@
 import Login from '@/components/Login'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
 import Image from 'next/image'
 import React from 'react'
 

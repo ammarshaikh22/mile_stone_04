@@ -1,7 +1,6 @@
 import React from 'react'
 import { DropdownMenuSeparator } from './ui/dropdown-menu'
 import Image from 'next/image'
-import { animationFooter } from '@/helper/AllAnimations'
 const Footer = () => {
     return (
         <footer className='relative pt-6'>
@@ -27,7 +26,7 @@ const Footer = () => {
                     <p className="text-gray-400 text-sm">
                         Get notified when I publish something new, and unsubscribe at any time.
                     </p>
-                    <form className="flex items-center border border-gray-900 dark:bg-gray-800 rounded-3xl p-1">
+                    <div className="flex items-center border border-gray-900 dark:bg-gray-800 rounded-3xl p-1">
                         <input
                             type="email"
                             placeholder="Enter your email address"
@@ -53,7 +52,7 @@ const Footer = () => {
                                 />
                             </svg>
                         </button>
-                    </form>
+                    </div>
                 </div>
                 <DropdownMenuSeparator className='bg-slate-400 w-full h-[0.5px] mt-24' />
                 <div className='py-10 flex justify-between items-center md:flex-row flex-col gap-6 md:gap-0'>

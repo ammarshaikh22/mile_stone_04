@@ -1,6 +1,6 @@
 "use client";
 import Image from 'next/image'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, MenuItem, ProductItem } from "./ui/navbar-menu";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { ModeToggle } from './ModeButton'
@@ -17,8 +17,26 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from 'next/link';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useRouter } from 'next/navigation';
 const Header = () => {
     const [active, setActive] = useState<string | null>(null);
+    const [login, setLogin] = useState(false)
+    const route = useRouter()
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (token) setLogin(!login)
+    }, [])
+
+    const handleLogout = async () => {
+        try {
+            if (!localStorage.getItem('token')) return
+            localStorage.removeItem('token')
+            setLogin(!login)
+            route.push('/login')
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <header className='sticky top-0 z-50 dark:bg-[#111827] md:py-1 py-4 bg-white shadow-lg'>
             <div className='max-w-[96%] mx-auto 2xl:max-w-[1536px]'>
@@ -48,7 +66,7 @@ const Header = () => {
                                     <SheetDescription>
                                         <ul className='flex gap-6 text-lg dark:text-white items-start flex-col text-black'>
                                             <Link href='/'><li>Home</li></Link>
-                                            <Link href='/'><li>All Post</li></Link>
+                                            <Link href='/blogs'><li>All Post</li></Link>
                                             <Link href='/contact'><li>Contact</li></Link>
                                         </ul>
                                     </SheetDescription>
@@ -69,7 +87,7 @@ const Header = () => {
                                     <MenuItem setActive={setActive} active={active} item="Home">
                                     </MenuItem>
                                 </Link>
-                                <MenuItem setActive={setActive} active={active} item="All Post" >
+                                <MenuItem link='/blogs' setActive={setActive} active={active} item="All Post" >
                                     <div className="text-sm grid grid-cols-3 gap-10 p-4">
                                         {
                                             Array.from({ length: 6 }).map((_, id: any) => {
@@ -77,7 +95,7 @@ const Header = () => {
                                                     <ProductItem
                                                         key={id}
                                                         title='DIYer and TV host Trisha'
-                                                        href='/'
+                                                        href='/blogs'
                                                         src='/blog4.webp'
                                                         description='Immerse yourself in the world of literature with our curated collection of books. From bestsellers to hidden gems, our assortment caters to a variety of interests and genres.'
                                                     />
@@ -94,9 +112,9 @@ const Header = () => {
                         </div>
                         <div>
                             <ul className='flex items-center gap-6 justify-center dark:text'>
-                                <li className='cursor-pointer md:flex hidden gap-2'>
+                                <Link href='/create' className='cursor-pointer md:flex hidden gap-2'>
                                     <span>+</span> Create
-                                </li>
+                                </Link>
                                 <li className='md:block hidden'>
                                     <ModeToggle />
                                 </li>
@@ -122,7 +140,7 @@ const Header = () => {
                                                     <ul className='flex flex-col text-lg dark:text-white gap-3 text-black'>
                                                         <Link href='/'><li>Profile</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
-                                                        <Link href='/'><li>Create</li></Link>
+                                                        <Link href='/create'><li>Create</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
                                                         <Link href='/'><li>Edite Profile</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
@@ -130,7 +148,7 @@ const Header = () => {
                                                         <DropdownMenuSeparator className='border border-gray-500' />
                                                         <li>Theme Modes <ModeToggle /></li>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
-                                                        <Link href='/signup'><li>Signup</li></Link>
+                                                        {login ? <li onClick={handleLogout}>Logout</li> : <Link href='/login'><li>Login</li></Link>}
                                                         <DropdownMenuSeparator className='border border-gray-500' />
                                                     </ul>
                                                 </SheetDescription>

@@ -35,8 +35,8 @@ const sendMail = async ({
             },
         });
 
-        const verifyHtml = `<p><a href='${process.env.DOMAIN}/verifyemail?token=${hashed}'>Here</a></p> 
-        <br>${process.env.DOMAIN}/verifyemail/?token=${hashed}</br>`;
+        const verifyHtml = `<p><a href='${process.env.DOMAIN}/verifyemail?token=${hashed}'>Click Here to verify email</a></p> 
+        <br><p>token: ${hashed}</p>`;
 
         const forgotHtml = '<p>Successfully password reset</p>';
 
