@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import type React from "react"
 import { Inter } from "next/font/google"
-import "./globals.css"
-import Header from "@/components/Header";
+import "@/app/(home)/globals.css"
 import { Poppins } from 'next/font/google';
-import AnimatedCursor from "react-animated-cursor"
-import Footer from "@/components/Footer";
 import { ThemeProvider } from "next-themes";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";

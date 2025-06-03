@@ -38,9 +38,9 @@ const Header = () => {
         }
     }
     return (
-        <header className='sticky top-0 z-50 dark:bg-[#111827] md:py-1 py-4 bg-white shadow-lg'>
-            <div className='max-w-[96%] mx-auto 2xl:max-w-[1536px]'>
-                <div className='flex justify-between items-center'>
+        <header className='sticky top-0 z-50 dark:bg-[#111827] md:py-0 py-4 bg-white shadow-lg'>
+            <div className='mx-auto 2xl:max-w-[1440px]'>
+                <div className='flex justify-around items-center'>
                     <div className='lg:hidden'>
                         <Sheet>
                             <SheetTrigger>
@@ -50,7 +50,7 @@ const Header = () => {
                                 <SheetHeader>
                                     <SheetTitle className='mb-6'>
                                         <div className='flex items-start gap-8 flex-col'>
-                                            <Image src="/logo.webp" alt="logo" width={60} height={50} />
+                                            <Image src="/logo.png" alt="logo" width={60} height={50} />
                                             <p className='dark:text text-start'>Discover the most outstanding articles on all topics of life. Write your stories and share them with the community.</p>
                                             <div className='flex gap-6'>
                                                 <Image src='/facebook.svg' alt='image' width={25} height={30} className='dark:bg-gray-500 rounded-md' />
@@ -75,10 +75,8 @@ const Header = () => {
                         </Sheet>
                     </div>
                     <div className='flex items-center gap-14'>
-                        <Image src="/logo.webp" alt="logo" width={60} height={50} />
-                        <div className='lg:block hidden'>
-                            <input type="text" className='bg-transparent border border-gray-600 outline-none px-4 w-64 py-2 text-white rounded-3xl' placeholder='Type to search...' />
-                        </div>
+                        <Image src="/logo.png" alt="logo" width={80} height={50} />
+
                     </div>
                     <div className='flex justify-between items-center gap-2'>
                         <div className='lg:block hidden w-full '>
@@ -87,23 +85,14 @@ const Header = () => {
                                     <MenuItem setActive={setActive} active={active} item="Home">
                                     </MenuItem>
                                 </Link>
-                                <MenuItem link='/blogs' setActive={setActive} active={active} item="All Post" >
-                                    <div className="text-sm grid grid-cols-3 gap-10 p-4">
-                                        {
-                                            Array.from({ length: 6 }).map((_, id: any) => {
-                                                return (
-                                                    <ProductItem
-                                                        key={id}
-                                                        title='DIYer and TV host Trisha'
-                                                        href='/blogs'
-                                                        src='/blog4.webp'
-                                                        description='Immerse yourself in the world of literature with our curated collection of books. From bestsellers to hidden gems, our assortment caters to a variety of interests and genres.'
-                                                    />
-                                                )
-                                            })
-                                        }
-                                    </div>
-                                </MenuItem>
+                                <Link href='/about'>
+                                    <MenuItem setActive={setActive} active={active} item="About">
+                                    </MenuItem>
+                                </Link>
+                                <Link href='/blogs'>
+                                    <MenuItem link='/blogs' setActive={setActive} active={active} item="All Post" >
+                                    </MenuItem>
+                                </Link>
                                 <Link href='/contact'>
                                     <MenuItem setActive={setActive} active={active} item="ContactUs">
                                     </MenuItem>
@@ -115,13 +104,13 @@ const Header = () => {
                                 <Link href='/create' className='cursor-pointer md:flex hidden gap-2'>
                                     <span>+</span> Create
                                 </Link>
-                                <li className='md:block hidden'>
-                                    <ModeToggle />
-                                </li>
+                                <div className='lg:block hidden'>
+                                    <input type="text" className='bg-transparent border border-gray-600 outline-none px-4 w-64 py-2 text-white rounded-3xl' placeholder='Type to search...' />
+                                </div>
                                 <li className='cursor-pointer flex gap-2 items-center'>
                                     <Sheet>
                                         <SheetTrigger>
-                                            <AccountCircleIcon className='text-4xl' />
+                                            <AccountCircleIcon className='text-5xl' />
                                         </SheetTrigger>
                                         <SheetContent>
                                             <SheetHeader>
@@ -138,15 +127,13 @@ const Header = () => {
                                                 </SheetTitle>
                                                 <SheetDescription>
                                                     <ul className='flex flex-col text-lg dark:text-white gap-3 text-black'>
-                                                        <Link href='/'><li>Profile</li></Link>
+                                                        <Link href='/dashboard'><li>Profile</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
                                                         <Link href='/create'><li>Create</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
-                                                        <Link href='/'><li>Edite Profile</li></Link>
+                                                        <Link href='/dashboard/profile'><li>Edite Profile</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
-                                                        <Link href='/'><li>My Post</li></Link>
-                                                        <DropdownMenuSeparator className='border border-gray-500' />
-                                                        <li>Theme Modes <ModeToggle /></li>
+                                                        <Link href='/dashboard/posts'><li>My Post</li></Link>
                                                         <DropdownMenuSeparator className='border border-gray-500' />
                                                         {login ? <li onClick={handleLogout}>Logout</li> : <Link href='/login'><li>Login</li></Link>}
                                                         <DropdownMenuSeparator className='border border-gray-500' />
@@ -159,6 +146,7 @@ const Header = () => {
                                 </li>
                             </ul>
                         </div>
+
                     </div>
                 </div>
             </div>

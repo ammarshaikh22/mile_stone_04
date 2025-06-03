@@ -3,12 +3,9 @@ import React, { useEffect } from 'react'
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import { animationNews } from '@/helper/AllAnimations';
 const News = () => {
-    useEffect(() => {
-        const card = document.querySelectorAll('#card');
-        animationNews(card);
-    })
+   
     return (
-        <section className='relative md:py-28 py-20'>
+        <section className='relative md:pt-28 pt-20 overflow-x-hidden'>
             <div className='md:max-w-[82%] max-w-[95%] mx-auto'>
                 <div className='grid md:grid-cols-2 grid-cols-1 gap-6'>
                     <div className='flex flex-col items-start gap-8'>

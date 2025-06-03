@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import React from 'react'
-import '@/app/globals.css'
+import '@/app/(home)/globals.css';
 import AnimatedCursor from 'react-animated-cursor';
 export const metadata: Metadata = {
   title: "Blog",

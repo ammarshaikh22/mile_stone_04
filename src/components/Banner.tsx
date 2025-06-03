@@ -46,19 +46,19 @@ const Banner = () => {
     }, []);
 
     return (
-        <section className="relative h-screen">
+        <section className="relative pb-40 overflow-x-hidden">
             <div className="md:max-w-[82%] max-w-[95%] mx-auto relative h-full">
                 <div className="relative h-[400px] md:h-[496px] md:w-full w-[95%] mx-auto max-w-[992px] rounded-[40px]">
                     <div className="absolute inset-0 bg-[url('/banner-bg.webp')] bg-cover bg-center bg-no-repeat rounded-[40px]" />
                     <div className="absolute inset-0 bg-black opacity-50 rounded-[40px]" />
                     <div className="relative z-10 flex h-full items-start md:p-14 p-6 flex-col md:max-w-[80%] max-w-[95%]">
                         <h1 id='banner-title' className="text-white md:text-4xl text-2xl font-bold md:mb-6 mb-4">
-                            Your Daily Dose of Inspiration and Knowledge
+                            Generative AI isn’t the future — it’s the artist of tomorrow, the writer of now, and the architect of human-machine evolution.
                         </h1>
-                        <p id='banner-para' className='line-clamp-3 text-gray-300'>Stay inspired and informed with fresh ideas, stories, and perspectives delivered daily. Dive into topics that spark curiosity, ignite creativity, and expand your knowledge. This is your space to explore, learn, and grow</p>
+                        <p id='banner-para' className=' text-gray-300'>Generative AI is transforming development as we know it — from large language models that write code to multimodal systems that generate entire applications from a single prompt. This blog is a deep dive into the mechanics of creation: token by token, layer by layer.</p>
                         <Button id='banner-btn' size={'lg'} variant="destructive" className='bg-[#0D9488] md:mt-8 mt-6'>Read more</Button>
                     </div>
-                    <div  className='lg:absolute mt-6 lg:mt-0 lg:-bottom-24 lg:left-1/2 lg:-translate-x-1/2 flex justify-between items-center gap-8 lg:flex-row flex-col'>
+                    <div className='lg:absolute mt-6 lg:mt-0 lg:-bottom-24 lg:left-1/2 lg:-translate-x-1/2 flex justify-between items-center gap-8 lg:flex-row flex-col'>
                         {
                             Array.from({ length: 3 }).map((_, id: any) => {
                                 return (

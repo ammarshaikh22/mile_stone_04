@@ -13,7 +13,7 @@ const About = () => {
         animationAbout(title, heading, para, btn, image);
     }, []);
     return (
-        <section id='about' className='relative pt-[400px] md:pt-52 mb-24'>
+        <section id='about' className='relative mb-24'>
             <div className='md:max-w-[82%] max-w-[95%] mx-auto'>
                 <div className='flex items-center justify-between md:flex-row flex-col gap-6'>
                     <div className='flex flex-col items-start gap-4'>

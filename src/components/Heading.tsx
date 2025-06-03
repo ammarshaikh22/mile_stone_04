@@ -9,7 +9,7 @@ const Heading = ({ id, heading, para, className }: { id?: string, heading: strin
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: `#${id}`,
-                start: 'top 80%',
+                start: 'top 60%',
                 end: 'top 50%',
                 scrub: true,
             },

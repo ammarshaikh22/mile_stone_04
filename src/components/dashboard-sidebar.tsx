@@ -29,7 +29,7 @@ export function DashboardSidebar() {
   return (
     <>
       {isMobile && (
-        <div className="flex items-center h-14 px-4 border-b ">
+        <div className="flex items-center h-14 border-b px-4">
           <SidebarTrigger />
           <div className="ml-4 font-semibold">Dashboard</div>
         </div>

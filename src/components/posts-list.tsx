@@ -48,7 +48,7 @@ export function PostsList({ status }: PostsListProps) {
       case "scheduled":
         return <Badge variant="secondary">Scheduled</Badge>
       case "pending":
-        return <Badge variant="warning">Pending</Badge>
+        return <Badge variant="secondary">Pending</Badge>
       default:
         return null
     }

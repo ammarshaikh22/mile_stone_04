@@ -11,7 +11,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/x"
+import { toast } from "@/components/ui/use-toast"
 
 const accountFormSchema = z.object({
   username: z.string().min(2, {
@@ -34,7 +34,6 @@ export function AccountSettings() {
   }
 
   const form = useForm<AccountFormValues>({
-    resolver: zodResolver(accountFormSchema),
     defaultValues,
     mode: "onChange",
   })

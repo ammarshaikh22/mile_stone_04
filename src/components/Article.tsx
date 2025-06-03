@@ -11,7 +11,7 @@ import {
 import Heading from './Heading'
 const Article = () => {
     return (
-        <section className='relative pb-20'>
+        <section className='relative py-20'>
             <div className='md:max-w-[82%] max-w-[95%] mx-auto'>
                 <Heading id='article-title' heading='Latest articles 🎈' para='Discover the most outstanding articles ins all topics of life.' />
                 <div className='grid md:grid-cols-2 grid-cols-1 gap-4'>
