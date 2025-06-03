@@ -89,3 +89,7 @@
     @apply text-[#D1D5DB]
   }
 }
+
+.bg-sidebar{
+  background-color: #111827;
+}
