@@ -18,7 +18,7 @@ function Signup() {
     try {
       if (!name || !email || !password) return
       setLoader(true)
-      const res = await axios.post('http://localhost:8000/api/v1/signup', {
+      const res = await axios.post('https://ai-blogs.up.railway.app/api/v1/signup', {
         name,
         email,
         password,

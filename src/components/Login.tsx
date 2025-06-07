@@ -21,8 +21,7 @@ const Login = () => {
                 return
             }
             setLoader(true)
-            const res = await axios.post('http://localhost:8000/api/v1/login', { email, password })
-            console.log(res)
+            const res = await axios.post('https://ai-blogs.up.railway.app/api/v1/login', { email, password })
             localStorage.setItem('token', res.data.token)
             if (res.status === 200) return route.push('/')
         } catch (error: any) {

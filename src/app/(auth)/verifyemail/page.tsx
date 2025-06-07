@@ -11,7 +11,7 @@ const VerifyEmail = () => {
       if (opt.length !== 5) {
         alert('please input correct otp')
       }
-      const res = await axios.post('http://localhost:8000/api/v1/verify', { token: opt })
+      const res = await axios.post('https://ai-blogs.up.railway.app/api/v1/verify', { token: opt })
       if (res.status === 200) return route.push('/login')
     } catch (error: any) {
       console.log(error.responce.data.message)
