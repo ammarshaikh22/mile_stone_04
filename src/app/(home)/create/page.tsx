@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,26 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  ImagePlus,
-  X,
-  Bold,
-  Italic,
-  Link,
-  Heading,
-  Quote,
-  List,
-  ListOrdered,
-  Code,
-  Smile,
-  ImageIcon,
-  MoreHorizontal,
-  Clock,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ImagePlus, X, Plus, Trash2 } from "lucide-react";
 import axios from "axios";
-
+import { ToastContainer, toast } from "react-toastify";
+import { Bars } from "react-loader-spinner"
 interface SubSection {
   title: string;
   description: string;
@@ -41,10 +24,9 @@ export default function CreateBlogPage() {
   const [tags, setTags] = useState<string[]>(["Blog", "ChisNghiax"]);
   const [newCategory, setNewCategory] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [user, setUser] = useState("");
   const [subSections, setSubSections] = useState<SubSection[]>([]);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
-
+  const [loading, setLoading] = useState(false);
   const addCategory = () => {
     if (
       newCategory.trim() &&
@@ -103,27 +85,17 @@ export default function CreateBlogPage() {
 
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("date", new Date().toLocaleDateString());
-    formData.append("tags", JSON.stringify(tags));
-    formData.append("categories", JSON.stringify(categories));
+    formData.append("category", JSON.stringify(categories));
+    formData.append("subSections", JSON.stringify(subSections));
 
-    // Append subSections with their title and description
-    subSections.forEach((section, index) => {
-      formData.append(`subSections[${index}][title]`, section.title);
-      formData.append(
-        `subSections[${index}][description]`,
-        section.description
-      );
-    });
-
-    // Append image if available
     if (featuredImage) {
       formData.append("image", featuredImage);
     }
 
     try {
+      setLoading(true);
       const res = await axios.post(
-        "http://localhost:8000/api/v2/addBlog",
+        "https://ai-blogs.up.railway.app/api/v2/addBlog",
         formData,
         {
           headers: {
@@ -132,16 +104,37 @@ export default function CreateBlogPage() {
           },
         }
       );
-
-      const data = res.data;
-
-      if (data.success) {
-        console.log("Blog published successfully:", data);
-      } else {
-        console.error("Failed to publish blog:", data.message);
-      }
-    } catch (error) {
-      console.error("Error publishing blog:", error);
+      toast.success('Blog created successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setCategories([]);
+      setTitle("");
+      setDescription("");
+      setSubSections([]);
+      setFeaturedImage(null);
+      setNewCategory("");
+      setNewTag("");
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -151,10 +144,21 @@ export default function CreateBlogPage() {
   };
 
   return (
+    // JSX remains unchanged
     <div className=" text-white">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="max-w-[90%] mx-auto py-8">
         <div className="space-y-8">
-          {/* Featured Image Upload */}
           <div className="space-y-2">
             <Label className="text-white font-medium">Featured image</Label>
             <div className="border-2 border-dashed border-slate-600 rounded-lg p-12 text-center hover:border-slate-500 transition-colors">
@@ -226,8 +230,6 @@ export default function CreateBlogPage() {
               </div>
             )}
           </div>
-
-          {/* Tags */}
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
@@ -256,10 +258,7 @@ export default function CreateBlogPage() {
               )}
             </div>
           </div>
-
-          {/* Rich Text Editor Toolbar */}
           <div className="border-t border-slate-600 pt-6">
-            {/* Main Description */}
             <div className="space-y-2 mb-6">
               <Label className="text-white font-medium">Description</Label>
               <Textarea
@@ -269,8 +268,6 @@ export default function CreateBlogPage() {
                 placeholder="Write your blog content here..."
               />
             </div>
-
-            {/* Sub Sections */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-white font-medium">Sub Sections</Label>
@@ -284,7 +281,6 @@ export default function CreateBlogPage() {
                   Add Section
                 </Button>
               </div>
-
               {subSections.map((section, index) => (
                 <Card key={index} className="bg-[#0F172A] border-slate-600">
                   <CardContent className="p-4 space-y-4">
@@ -323,22 +319,31 @@ export default function CreateBlogPage() {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-4 pt-6 border-t border-slate-600">
-            <Button
-              onClick={handlePublish}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8"
-            >
-              Publish
-            </Button>
-            <Button
-              onClick={handleSaveDraft}
-              variant="outline"
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
-            >
-              Save draft
-            </Button>
-          </div>
+          {loading ? <Bars
+            height="50"
+            width="50"
+            color="#fff"
+            ariaLabel="bars-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          /> : (
+            <div className="flex items-center gap-4 pt-6 border-t border-slate-600">
+              <Button
+                onClick={handlePublish}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8"
+              >
+                Publish
+              </Button>
+              <Button
+                onClick={handleSaveDraft}
+                variant="outline"
+                className="border-slate-600 text-slate-300 hover:bg-slate-700"
+              >
+                Save draft
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

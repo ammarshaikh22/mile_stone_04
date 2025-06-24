@@ -22,7 +22,6 @@ export default function GalleryPage() {
     }
     fetchData()
   }, [])
-  console.log(data)
   return (
     <div className=" text-white p-4 md:p-6">
       <div className="max-w-[90%] mx-auto">
@@ -74,7 +73,7 @@ export default function GalleryPage() {
                     width={400}
                     height={250}
                     alt='img'
-                    className="w-full h-[260px] object-cover"
+                    className="w-full h-[260px] object-top object-cover"
                   />
                   <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-1 p-2">
 
@@ -93,9 +92,9 @@ export default function GalleryPage() {
                     <span className="text-xs text-white">{post.date}</span>
                   </div>
                   <div className="flex flex-col items-start px-2 gap-2">
-                    <h3 className="font-medium text-sm">{post.title}</h3>
+                    <h3 className="font-medium line-clamp-1 text-sm">{post.title}</h3>
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-zinc-500">{post.description}</span>
+                      <span className="text-xs line-clamp-2 text-zinc-500">{post.description}</span>
                     </div>
                   </div>
                 </CardContent>
