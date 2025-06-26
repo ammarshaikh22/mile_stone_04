@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ImagePlus, X, Plus, Trash2 } from "lucide-react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { Bars } from "react-loader-spinner"
+import { Bars } from "react-loader-spinner";
 interface SubSection {
   title: string;
   description: string;
@@ -85,7 +85,7 @@ export default function CreateBlogPage() {
 
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("category", JSON.stringify(categories));
+    categories.forEach((category) => formData.append("category", category));
     formData.append("subSections", JSON.stringify(subSections));
 
     if (featuredImage) {
@@ -104,7 +104,7 @@ export default function CreateBlogPage() {
           },
         }
       );
-      toast.success('Blog created successfully', {
+      toast.success("Blog created successfully", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -319,15 +319,17 @@ export default function CreateBlogPage() {
             </div>
           </div>
 
-          {loading ? <Bars
-            height="50"
-            width="50"
-            color="#fff"
-            ariaLabel="bars-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          /> : (
+          {loading ? (
+            <Bars
+              height="50"
+              width="50"
+              color="#fff"
+              ariaLabel="bars-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+          ) : (
             <div className="flex items-center gap-4 pt-6 border-t border-slate-600">
               <Button
                 onClick={handlePublish}
