@@ -8,37 +8,61 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { headers } from "next/headers";
+
 export default function GalleryPage() {
   const [data, setData] = useState([]);
-  const [isOwn, setIsOwn] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [delet, setDelet] = useState(false);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("userDetails");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setCurrentUserId(parsedUser._id);
+    }
+  }, [delet]);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/v2/blogs`);
+        const res = await axios.get(
+          `https://ai-blogs.up.railway.app/api/v2/blogs`
+        );
         setData(res.data.data);
-        const userData:string | null = localStorage.getItem("userDetails");
-        const parse = await JSON.parse(userData ??"" )
-        const id = res.data.data.map((ele:any) => ele.user._id)
-        if(id == parse._id) setIsOwn(true)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
   }, []);
+  const deleteBlog = async (id: any) => {
+    try {
+      const res = await axios.delete(
+        `https://ai-blogs.up.railway.app/api/v2/deleteBlog/${id}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token") || "",
+          },
+        }
+      );
+      if (res.status == 200) setDelet(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-    <div className=" text-white p-4 md:p-6">
+    <div className="text-white p-4 md:p-6">
       <div className="max-w-[90%] mx-auto">
         {/* Header */}
-        <div className="rounded-[20px]  bg-[#111827] p-6 mb-6">
+        <div className="rounded-[20px] bg-[#111827] p-6 mb-6">
           <div className="flex items-center gap-6">
-            <div className="bg-[#111827]  flex items-center justify-center">
+            <div className="bg-[#111827] flex items-center justify-center">
               <Image
                 src="/banner-bg.webp"
                 width={200}
                 height={200}
                 alt="Gallery icon"
-                className=" rounded-[20px]"
+                className="rounded-[20px]"
               />
             </div>
             <div>
@@ -57,14 +81,14 @@ export default function GalleryPage() {
             <Button
               variant="outline"
               size="sm"
-              className="bg-[#111827]  text-zinc-400 "
+              className="bg-[#111827] text-zinc-400"
             >
               Other categories <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="bg-[#111827]  text-zinc-400 "
+              className="bg-[#111827] text-zinc-400"
             >
               Other tags <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
@@ -72,7 +96,7 @@ export default function GalleryPage() {
           <Button
             variant="outline"
             size="sm"
-            className="bg-[#111827]  text-zinc-400 "
+            className="bg-[#111827] text-zinc-400"
           >
             Newest to oldest <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
@@ -81,7 +105,10 @@ export default function GalleryPage() {
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((post: any, index) => (
-            <Card className="bg-[#111827] rounded-[30px]  overflow-hidden">
+            <Card
+              className="bg-[#111827] rounded-[30px] overflow-hidden"
+              key={index}
+            >
               <div className="relative">
                 <Image
                   src={post.image}
@@ -111,7 +138,7 @@ export default function GalleryPage() {
                 <div className="flex justify-between">
                   <div className="flex flex-col items-start px-2 gap-2 max-w-[75%]">
                     <div className="flex gap-2 items-center">
-                    {post.user.profileImage ? (
+                      {post.user.profileImage ? (
                         <Image
                           src={post.user.profileImage}
                           alt="user"
@@ -119,9 +146,9 @@ export default function GalleryPage() {
                           height={50}
                         />
                       ) : (
-                        <AccountCircleIcon  />
+                        <AccountCircleIcon />
                       )}
-                    <h3 className="text-[13px]">{post.user.name}</h3>
+                      <h3 className="text-[13px]">{post.user.name}</h3>
                     </div>
                     <h3 className="font-medium line-clamp-1 text-sm">
                       {post.title}
@@ -139,14 +166,21 @@ export default function GalleryPage() {
                       see more
                     </Link>
                   </div>
-                {isOwn &&  <div className="mt-3 flex gap-4">
-                    <SquarePen
-                      size={20}
-                      color="green"
-                      className="cursor-pointer"
-                    />
-                    <Trash2 size={20} color="red" className="cursor-pointer" />
-                  </div>}
+                  {currentUserId && post.user._id === currentUserId && (
+                    <div className="mt-3 flex gap-4">
+                      <SquarePen
+                        size={20}
+                        color="green"
+                        className="cursor-pointer"
+                      />
+                      <Trash2
+                        onClick={() => deleteBlog(post._id)}
+                        size={20}
+                        color="red"
+                        className="cursor-pointer"
+                      />
+                    </div>
+                  )}
                 </div>
               </CardContent>
               <CardFooter className="p-3 pt-0 flex items-center justify-between"></CardFooter>
