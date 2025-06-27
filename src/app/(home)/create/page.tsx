@@ -106,7 +106,7 @@ export default function CreateBlogPage() {
       );
       toast.success("Blog created successfully", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: false,
         pauseOnHover: true,
@@ -125,7 +125,7 @@ export default function CreateBlogPage() {
       setLoading(false);
       toast.error(error.response.data.message, {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: false,
         pauseOnHover: true,

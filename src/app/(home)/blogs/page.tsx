@@ -2,26 +2,35 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ChevronDown, CalendarDays, SquarePen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { headers } from "next/headers";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function GalleryPage() {
   const [data, setData] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
-  const [delet, setDelet] = useState(false);
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState<any>(null);
   useEffect(() => {
     const userData = localStorage.getItem("userDetails");
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setCurrentUserId(parsedUser._id);
     }
-  }, [delet]);
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,13 +54,44 @@ export default function GalleryPage() {
           },
         }
       );
-      if (res.status == 200) setDelet(true);
-    } catch (error) {
+      toast.success("Blog Deleted successfully", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setData(data.filter((blog: any) => blog._id !== id));
+    } catch (error: any) {
       console.log(error);
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   return (
     <div className="text-white p-4 md:p-6">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="max-w-[90%] mx-auto">
         {/* Header */}
         <div className="rounded-[20px] bg-[#111827] p-6 mb-6">
@@ -174,7 +214,10 @@ export default function GalleryPage() {
                         className="cursor-pointer"
                       />
                       <Trash2
-                        onClick={() => deleteBlog(post._id)}
+                        onClick={() => {
+                          setBlogToDelete(post);
+                          setIsDialogOpen(true);
+                        }}
                         size={20}
                         color="red"
                         className="cursor-pointer"
@@ -187,6 +230,31 @@ export default function GalleryPage() {
             </Card>
           ))}
         </div>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete the blog "{blogToDelete?.title}
+                "?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  deleteBlog(blogToDelete._id);
+                  setIsDialogOpen(false);
+                }}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
