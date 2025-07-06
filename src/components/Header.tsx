@@ -54,6 +54,7 @@ const Header = () => {
         },
       })
       localStorage.removeItem("token");
+      localStorage.removeItem("userDetails");
       setLogin(!login);
       route.push("/login");
     } catch (error) {

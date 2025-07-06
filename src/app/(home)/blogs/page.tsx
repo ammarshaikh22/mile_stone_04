@@ -2,11 +2,10 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ChevronDown, CalendarDays, SquarePen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "@/lib/axios";
 import Link from "next/link";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import {
@@ -17,13 +16,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
+} from "@/components/ui/drawer";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function GalleryPage() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any>([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<any>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [blogToEdit, setBlogToEdit] = useState(null);
+  const [formData, setFormData] = useState<any>();
+  const [isFetching, setIsFetching] = useState(false);
+
   useEffect(() => {
     const userData = localStorage.getItem("userDetails");
     if (userData) {
@@ -31,12 +44,11 @@ export default function GalleryPage() {
       setCurrentUserId(parsedUser._id);
     }
   }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `https://ai-blogs.up.railway.app/api/v2/blogs`
-        );
+        const res = await axios.get("/api/v2/blogs");
         setData(res.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -44,16 +56,32 @@ export default function GalleryPage() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (isDrawerOpen && blogToEdit) {
+      const fetchBlogData = async () => {
+        setIsFetching(true);
+        try {
+          const res = await axios.get(`/api/v2/singleBlog/${blogToEdit}`);
+          setFormData(res.data.data);
+        } catch (error) {
+          console.error("Error fetching blog data:", error);
+          toast.error("Failed to fetch blog data");
+        } finally {
+          setIsFetching(false);
+        }
+      };
+      fetchBlogData();
+    }
+  }, [isDrawerOpen, blogToEdit]);
+
   const deleteBlog = async (id: any) => {
     try {
-      const res = await axios.delete(
-        `https://ai-blogs.up.railway.app/api/v2/deleteBlog/${id}`,
-        {
-          headers: {
-            Authorization: localStorage.getItem("token") || "",
-          },
-        }
-      );
+      const res = await axios.delete(`/api/v2/deleteBlog/${id}`, {
+        headers: {
+          Authorization: localStorage.getItem("token") || "",
+        },
+      });
       toast.success("Blog Deleted successfully", {
         position: "top-right",
         autoClose: 2000,
@@ -67,7 +95,7 @@ export default function GalleryPage() {
       setData(data.filter((blog: any) => blog._id !== id));
     } catch (error: any) {
       console.log(error);
-      toast.error(error, {
+      toast.error(error.message, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -79,6 +107,44 @@ export default function GalleryPage() {
       });
     }
   };
+
+  const handleUpdate = async () => {
+    const form = document.querySelector("#edit-form") as HTMLFormElement;
+    if (!form) return;
+
+    const formDataObj = new FormData(form);
+    const updatedData = {
+      title: formDataObj.get("title") as string,
+      description: formDataObj.get("description") as string,
+      category: (formDataObj.get("category") as string)
+        .split(",")
+        .map((cat) => cat.trim()),
+    };
+
+    try {
+      const res = await axios.put(
+        `/api/v2/updateBlog/${blogToEdit}`,
+        updatedData,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      toast.success("Blog updated successfully");
+      setIsDrawerOpen(false);
+      const updatedBlog = res.data.data;
+      setData((prevData: any) =>
+        prevData.map((blog: any) =>
+          blog._id === updatedBlog?._id ? updatedBlog : blog
+        )
+      );
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      toast.error("Failed to update blog");
+    }
+  };
+
   return (
     <div className="text-white p-4 md:p-6">
       <ToastContainer
@@ -144,7 +210,7 @@ export default function GalleryPage() {
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.map((post: any, index) => (
+          {data.map((post: any, index: number) => (
             <Card
               className="bg-[#111827] rounded-[30px] overflow-hidden"
               key={index}
@@ -161,7 +227,7 @@ export default function GalleryPage() {
               </div>
               <CardContent className="p-3">
                 <div className="flex gap-2 mb-2">
-                  {post.category.map((category: any, i: number) => (
+                  {post.category.map((category: any, i: any) => (
                     <Badge
                       key={i}
                       variant="outline"
@@ -206,37 +272,44 @@ export default function GalleryPage() {
                       see more
                     </Link>
                   </div>
-                  {localStorage.getItem("token") && currentUserId && post.user._id === currentUserId && (
-                    <div className="mt-3 flex gap-4">
-                      <SquarePen
-                        size={20}
-                        color="green"
-                        className="cursor-pointer"
-                      />
-                      <Trash2
-                        onClick={() => {
-                          setBlogToDelete(post);
-                          setIsDialogOpen(true);
-                        }}
-                        size={20}
-                        color="red"
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  )}
+                  {localStorage.getItem("token") &&
+                    currentUserId &&
+                    post.user._id === currentUserId && (
+                      <div className="mt-3 flex gap-4">
+                        <SquarePen
+                          onClick={() => {
+                            setBlogToEdit(post._id);
+                            setIsDrawerOpen(true);
+                          }}
+                          size={20}
+                          color="green"
+                          className="cursor-pointer"
+                        />
+                        <Trash2
+                          onClick={() => {
+                            setBlogToDelete(post);
+                            setIsDialogOpen(true);
+                          }}
+                          size={20}
+                          color="red"
+                          className="cursor-pointer"
+                        />
+                      </div>
+                    )}
                 </div>
               </CardContent>
-              <CardFooter className="p-3 pt-0 flex items-center justify-between"></CardFooter>
+              <CardFooter className="p-3 pt-0"></CardFooter>
             </Card>
           ))}
         </div>
+
+        {/* Delete Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Confirm Deletion</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete the blog "{blogToDelete?.title}
-                "?
+                Are you sure you want to delete the blog "{blogToDelete?.title}"?
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -255,6 +328,68 @@ export default function GalleryPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Edit Drawer */}
+        <Drawer
+          open={isDrawerOpen}
+          onOpenChange={(open) => {
+            setIsDrawerOpen(open);
+            if (!open) {
+              setBlogToEdit(null);
+              setFormData(null);
+            }
+          }}
+        >
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Edit Blog</DrawerTitle>
+              <DrawerDescription>Update the blog details below.</DrawerDescription>
+            </DrawerHeader>
+            {isFetching ? (
+              <p className="p-4">Loading...</p>
+            ) : formData ? (
+              <form id="edit-form" className="p-4 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={formData.title || ""}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-[#111827] text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium">Description</label>
+                  <textarea
+                    name="description"
+                    defaultValue={formData.description || ""}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-[#111827] text-white"
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium">Category (comma-separated)</label>
+                  <input
+                    type="text"
+                    name="category"
+                    defaultValue={formData.category?.join(", ") || ""}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-[#111827] text-white"
+                  />
+                </div>
+              </form>
+            ) : (
+              <p className="p-4">No data available</p>
+            )}
+            <DrawerFooter>
+              <Button onClick={handleUpdate} disabled={isFetching || !formData}>
+                Update
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </div>
     </div>
   );
