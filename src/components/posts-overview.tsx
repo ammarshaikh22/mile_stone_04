@@ -2,7 +2,7 @@ import Link from "next/link"
 import { BarChart, FileText, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export function PostsOverview() {
+export function PostsOverview({ user }: any) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
@@ -11,7 +11,7 @@ export function PostsOverview() {
           <FileText className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">24</div>
+          <div className="text-2xl font-bold">{user?.length}</div>
           <p className="text-xs text-muted-foreground">+4 from last month</p>
           <Link href="/dashboard/posts" className="text-xs text-primary mt-2 block">
             View all posts

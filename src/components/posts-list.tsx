@@ -1,16 +1,31 @@
+'use client'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import axios from "@/lib/axios"
 import { Edit, Eye, MoreVertical, Trash } from "lucide-react"
+import { useEffect, useState } from "react"
 
-type PostStatus = "published" | "draft" | "scheduled" | "pending"
 
-interface PostsListProps {
-  status: PostStatus
-}
-
-export function PostsList({ status }: PostsListProps) {
+export function PostsList() {
+  const [userData, setUserData] = useState<any>();
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+          const response = await axios.get('/api/v1/getUser', {
+            headers: {
+              Authorization: localStorage.getItem('token')
+            }
+          });
+          setUserData(response.data.data);
+        } catch (err: any) {
+          console.log("Error fetching user data:", err.message);
+        }
+      };
+      fetchData();
+    }, []);
   // Mock data for different post statuses
   const posts = [
     {
@@ -39,30 +54,15 @@ export function PostsList({ status }: PostsListProps) {
     },
   ]
 
-  const getStatusBadge = (postStatus: PostStatus) => {
-    switch (postStatus) {
-      case "published":
-        return <Badge variant="default">Published</Badge>
-      case "draft":
-        return <Badge variant="outline">Draft</Badge>
-      case "scheduled":
-        return <Badge variant="secondary">Scheduled</Badge>
-      case "pending":
-        return <Badge variant="secondary">Pending</Badge>
-      default:
-        return null
-    }
-  }
-
   return (
     <div className="grid gap-4">
-      {posts.map((post) => (
+      {userData?.blogs.map((post:any) => (
         <Card key={post.id}>
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
                 <CardTitle>{post.title}</CardTitle>
-                <CardDescription className="mt-1">{post.excerpt}</CardDescription>
+                <CardDescription className="mt-1">{post.description}</CardDescription>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -90,13 +90,10 @@ export function PostsList({ status }: PostsListProps) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Created: {post.date}</span>
-              {post.scheduledDate && <span>• Scheduled for: {post.scheduledDate}</span>}
-              {post.views !== undefined && <span>• {post.views} views</span>}
+              <span>Created: {post.createdAt.slice(0,10)}</span>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            {getStatusBadge(status)}
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Eye className="mr-2 h-4 w-4" />

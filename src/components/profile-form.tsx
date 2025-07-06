@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "@/hooks/use-toast"
+import axios from "@/lib/axios"
 
 const profileFormSchema = z.object({
   displayName: z.string().min(2, {
@@ -35,11 +36,27 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 export function ProfileForm() {
   const [isLoading, setIsLoading] = useState(false)
-
+const [userData, setUserData] = useState<any>();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token'); 
+        const response = await axios.get('/api/v1/getUser', {
+          headers: {
+            Authorization: localStorage.getItem('token')
+          }
+        });
+        setUserData(response.data.data);
+      } catch (err: any) {
+        console.log("Error fetching user data:", err.message);
+      }
+    };
+    fetchData();
+  }, []);
   // Default values for the form
   const defaultValues: Partial<ProfileFormValues> = {
-    displayName: "John Doe",
-    email: "john@example.com",
+    displayName: userData?.name || "John Doe",
+    email: userData?.email || "johndoe@me.com",
     bio: "Frontend developer and UI/UX enthusiast.",
     website: "https://johndoe.com",
   }
@@ -71,7 +88,7 @@ export function ProfileForm() {
             <div className="flex flex-col items-center gap-4">
               <Avatar className="h-32 w-32">
                 <AvatarImage src="/placeholder.svg?height=128&width=128" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>{userData?.profileImage ? userData.profileImage : userData?.name.slice(0,2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <Button variant="outline">Change Avatar</Button>
             </div>

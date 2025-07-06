@@ -13,25 +13,18 @@ export default function PostsPage() {
           New Post
         </Button>
       </div>
-
       <Tabs defaultValue="published">
-        <TabsList className="mb-4">
-          <TabsTrigger value="published">Published</TabsTrigger>
-          <TabsTrigger value="drafts">Drafts</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-        </TabsList>
         <TabsContent value="published">
-          <PostsList status="published" />
+          <PostsList  />
         </TabsContent>
         <TabsContent value="drafts">
-          <PostsList status="draft" />
+          <PostsList />
         </TabsContent>
         <TabsContent value="scheduled">
-          <PostsList status="scheduled" />
+          <PostsList />
         </TabsContent>
         <TabsContent value="pending">
-          <PostsList status="pending" />
+          <PostsList  />
         </TabsContent>
       </Tabs>
     </div>
