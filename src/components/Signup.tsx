@@ -22,6 +22,8 @@ function Signup() {
         name,
         email,
         password,
+      }, {
+        withCredentials: true
       })
       if (res.status === 200) return route.push('/login')
     } catch (error) {

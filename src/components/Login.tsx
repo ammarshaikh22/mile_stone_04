@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 import ScaleLoader from "react-spinners/ScaleLoader";
-import axios from 'axios';
+import axios from '@/lib/axios';
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -21,7 +21,8 @@ const Login = () => {
                 return
             }
             setLoader(true)
-            const res = await axios.post('https://ai-blogs.up.railway.app/api/v1/login', { email, password })
+            const res = await axios.post('/api/v1/login'
+                , { email, password })
             localStorage.setItem('token', res.data.token)
             if (res.status === 200) return route.push('/')
         } catch (error: any) {
