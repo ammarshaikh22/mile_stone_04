@@ -206,7 +206,7 @@ export default function GalleryPage() {
                       see more
                     </Link>
                   </div>
-                  {currentUserId && post.user._id === currentUserId && (
+                  {localStorage.getItem("token") && currentUserId && post.user._id === currentUserId && (
                     <div className="mt-3 flex gap-4">
                       <SquarePen
                         size={20}

@@ -3,7 +3,6 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Menu, MenuItem, ProductItem } from "./ui/navbar-menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { ModeToggle } from "./ModeButton";
 import {
   Sheet,
   SheetContent,
@@ -16,7 +15,7 @@ import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios from "@/lib/axios";
 const Header = () => {
   const [active, setActive] = useState<string | null>(null);
   const [login, setLogin] = useState(false);
@@ -29,7 +28,7 @@ const Header = () => {
     const getUserData = async () => {
       try {
         const res = await axios.get(
-          `https://ai-blogs.up.railway.app/api/v1/getUser`,
+          `/api/v1/getUser`,
           {
             headers: {
               Authorization: localStorage.getItem("token"),
@@ -39,6 +38,7 @@ const Header = () => {
         setUser(res.data.data);
         res.data.data &&
           localStorage.setItem("userDetails", JSON.stringify(res.data.data));
+        
       } catch (error) {
         console.log(error);
       }
@@ -48,6 +48,11 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       if (!localStorage.getItem("token")) return;
+      const res = await axios.post("/api/v1/logout", {}, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
       localStorage.removeItem("token");
       setLogin(!login);
       route.push("/login");
