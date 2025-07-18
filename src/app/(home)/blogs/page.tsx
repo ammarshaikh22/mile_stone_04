@@ -332,7 +332,7 @@ export default function GalleryPage() {
         {/* Edit Drawer */}
         <Drawer
           open={isDrawerOpen}
-          onOpenChange={(open) => {
+          onOpenChange={(open:any) => {
             setIsDrawerOpen(open);
             if (!open) {
               setBlogToEdit(null);
