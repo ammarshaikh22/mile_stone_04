@@ -2,13 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 
 export function UserWelcome({ user }: any) {
-  console.log(user)
   return (
     <Card>
       <CardContent className="p-6">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <Avatar className="h-16 w-16">
-            <AvatarImage src="/placeholder.svg?height=64&width=64" alt="User" />
+            <AvatarImage src={user?.profileImage} alt="User" />
             <AvatarFallback>{user?.profileImage ? user.profileImage : user?.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>

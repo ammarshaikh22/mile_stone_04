@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Loader2 } from "lucide-react"
+import axios from "axios"
 
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -14,8 +15,11 @@ import { toast } from "@/components/ui/use-toast"
 
 const passwordFormSchema = z
   .object({
-    currentPassword: z.string().min(8, {
-      message: "Password must be at least 8 characters.",
+    email: z.string().email({
+      message: "Invalid email address.",
+    }),
+    currentPassword: z.string().min(1, {
+      message: "Current password is required.",
     }),
     newPassword: z.string().min(8, {
       message: "Password must be at least 8 characters.",
@@ -37,6 +41,7 @@ export function PasswordForm() {
   const form = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordFormSchema),
     defaultValues: {
+      email: "",
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
@@ -44,18 +49,37 @@ export function PasswordForm() {
     mode: "onChange",
   })
 
-  function onSubmit(data: PasswordFormValues) {
+  async function onSubmit(data: PasswordFormValues) {
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      toast({
-        title: "Password updated",
-        description: "Your password has been updated successfully.",
+    try {
+      const token = localStorage.getItem("token")
+      const response = await axios.post('/api/v1/updatePass', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      form.reset()
-    }, 1000)
+      if (response.data.success) {
+        toast({
+          title: "Password updated",
+          description: "Your password has been updated successfully.",
+        })
+        form.reset()
+      } else {
+        toast({
+          title: "Error",
+          description: response.data.message || "Failed to update password.",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while updating the password.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -67,6 +91,19 @@ export function PasswordForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="currentPassword"
