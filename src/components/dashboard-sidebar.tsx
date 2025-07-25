@@ -71,10 +71,10 @@ export function DashboardSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={isActive("/dashboard/settings")}>
-                <Link href="/dashboard/settings">
+              <SidebarMenuButton asChild isActive={isActive("/dashboard/admin")}>
+                <Link href="/dashboard/admin">
                   <Settings className="h-4 w-4" />
-                  <span>Settings</span>
+                  <span>Admin Panal</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

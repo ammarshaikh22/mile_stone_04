@@ -1,19 +1,25 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Loader2 } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "@/hooks/use-toast"
-import axios from "@/lib/axios"
+import { useEffect, useState, useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import axios from "@/lib/axios";
+import { PasswordForm } from "./password-form";
 
 const profileFormSchema = z.object({
   displayName: z.string().min(2, {
@@ -30,21 +36,35 @@ const profileFormSchema = z.object({
     })
     .optional()
     .or(z.literal("")),
-})
+});
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export function ProfileForm() {
-  const [isLoading, setIsLoading] = useState(false)
-const [userData, setUserData] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState<any>();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      displayName: "John Doe",
+      email: "johndoe@me.com",
+      bio: "Frontend developer and UI/UX enthusiast.",
+      website: "https://johndoe.com",
+    },
+    mode: "onChange",
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token'); 
-        const response = await axios.get('/api/v1/getUser', {
+        const response = await axios.get("/api/v1/getUser", {
           headers: {
-            Authorization: localStorage.getItem('token')
-          }
+            Authorization: localStorage.getItem("token"),
+          },
         });
         setUserData(response.data.data);
       } catch (err: any) {
@@ -53,31 +73,50 @@ const [userData, setUserData] = useState<any>();
     };
     fetchData();
   }, []);
-  // Default values for the form
-  const defaultValues: Partial<ProfileFormValues> = {
-    displayName: userData?.name || "John Doe",
-    email: userData?.email || "johndoe@me.com",
-    bio: "Frontend developer and UI/UX enthusiast.",
-    website: "https://johndoe.com",
-  }
 
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues,
-    mode: "onChange",
-  })
+  useEffect(() => {
+    if (userData) {
+      form.reset({
+        displayName: userData.name,
+        email: userData.email,
+      });
+    }
+  }, [userData, form]);
 
-  function onSubmit(data: ProfileFormValues) {
-    setIsLoading(true)
+  async function onSubmit(data: ProfileFormValues) {
+    if (!selectedFile) {
+      console.log("No image selected. Please select an image to update your profile.");
+      setIsLoading(false);
+      return;
+    }
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
-      })
-    }, 1000)
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", data.displayName);
+      formData.append("email", data.email);
+      formData.append("image", selectedFile);
+
+      const res = await axios.put(
+        "/api/v1/updateUser",
+        formData,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        setUserData(res.data.data);
+        setSelectedFile(null);
+        setPreviewUrl(null);
+      }
+    } catch (error) {
+      console.log("Error updating profile:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -87,15 +126,41 @@ const [userData, setUserData] = useState<any>();
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex flex-col items-center gap-4">
               <Avatar className="h-32 w-32">
-                <AvatarImage src="/placeholder.svg?height=128&width=128" alt="User" />
-                <AvatarFallback>{userData?.profileImage ? userData.profileImage : userData?.name.slice(0,2).toUpperCase()}</AvatarFallback>
+                <AvatarImage
+                  src={previewUrl || userData?.profileImage || "/placeholder.svg?height=128&width=128"}
+                  alt="User"
+                />
+                <AvatarFallback>
+                  {userData?.name?.slice(0, 2).toUpperCase() || "JD"}
+                </AvatarFallback>
               </Avatar>
-              <Button variant="outline">Change Avatar</Button>
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                Change Avatar
+              </Button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    setSelectedFile(file);
+                    setPreviewUrl(URL.createObjectURL(file));
+                  }
+                }}
+              />
             </div>
 
             <div className="flex-1">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
                   <FormField
                     control={form.control}
                     name="displayName"
@@ -105,7 +170,9 @@ const [userData, setUserData] = useState<any>();
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
-                        <FormDescription>This is your public display name.</FormDescription>
+                        <FormDescription>
+                          This is your public display name.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -119,45 +186,17 @@ const [userData, setUserData] = useState<any>();
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
-                        <FormDescription>Your email address is used for notifications.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="bio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bio</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Tell us a little bit about yourself"
-                            className="resize-none"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>Brief description for your profile. Max 160 characters.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="website"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Website</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormDescription>Your personal or professional website.</FormDescription>
+                        <FormDescription>
+                          Your email address is used for notifications.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <Button type="submit" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Update Profile
                   </Button>
                 </form>
@@ -166,6 +205,7 @@ const [userData, setUserData] = useState<any>();
           </div>
         </CardContent>
       </Card>
+      <PasswordForm />
     </div>
-  )
+  );
 }

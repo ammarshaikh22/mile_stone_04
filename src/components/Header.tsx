@@ -61,6 +61,7 @@ const Header = () => {
       console.log(error);
     }
   };
+  console.log(user)
   return (
     <header className="sticky top-0 z-50 dark:bg-[#111827] md:py-0 py-4 bg-white shadow-lg">
       <div className="mx-auto 2xl:max-w-[1440px]">
@@ -196,12 +197,13 @@ const Header = () => {
                 <li className="cursor-pointer flex gap-2 items-center">
                   <Sheet>
                     <SheetTrigger>
-                      {user.profileImage ? (
+                      {user?.profileImage ? (
                         <Image
                           src={user.profileImage}
                           alt="user"
                           width={50}
                           height={50}
+                           className="rounded-full min-h-10 min-w-10 object-cover"
                         />
                       ) : (
                         <AccountCircleIcon className="text-6xl" />
@@ -212,12 +214,13 @@ const Header = () => {
                         <SheetTitle className="mb-6">
                           <div className="flex items-center gap-3 md:flex-row flex-col">
                             <div>
-                              {user.profileImage ? (
+                              {user?.profileImage ? (
                                 <Image
-                                  src={user.profileImage}
+                                  src={user?.profileImage}
                                   alt="user"
                                   width={50}
                                   height={50}
+                                  className="rounded-full min-h-10 min-w-10 object-cover"
                                 />
                               ) : (
                                 <AccountCircleIcon className="text-6xl" />
