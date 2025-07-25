@@ -25,7 +25,10 @@ export function DashboardSidebar() {
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(`${path}/`)
   }
-
+  const Admin = localStorage.getItem("userDetails")
+  ? JSON.parse(localStorage.getItem("userDetails") || "{}").isAdmin
+  : false;
+  console.log("Admin", Admin)
   return (
     <>
       {isMobile && (
@@ -70,14 +73,14 @@ export function DashboardSidebar() {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
+           {Admin && <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={isActive("/dashboard/admin")}>
                 <Link href="/dashboard/admin">
                   <Settings className="h-4 w-4" />
                   <span>Admin Panal</span>
                 </Link>
               </SidebarMenuButton>
-            </SidebarMenuItem>
+            </SidebarMenuItem>}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>

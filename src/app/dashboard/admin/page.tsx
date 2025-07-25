@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "@/lib/axios"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -30,147 +31,153 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Users, FileText, Edit, Trash2, Plus, Search, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { toast } from "@/components/ui/use-toast"
 
-// Mock data
-const mockUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: "/placeholder.svg?height=32&width=32",
-    status: "active",
-    joinDate: "2024-01-15",
-    blogCount: 5,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    avatar: "/placeholder.svg?height=32&width=32",
-    status: "active",
-    joinDate: "2024-02-20",
-    blogCount: 3,
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    avatar: "/placeholder.svg?height=32&width=32",
-    status: "inactive",
-    joinDate: "2024-01-10",
-    blogCount: 8,
-  },
-  {
-    id: 4,
-    name: "Sarah Wilson",
-    email: "sarah@example.com",
-    avatar: "/placeholder.svg?height=32&width=32",
-    status: "active",
-    joinDate: "2024-03-05",
-    blogCount: 2,
-  },
-]
+type User = {
+  _id: string
+  name: string
+  email: string
+  profileImage?: string
+  blogs: any[]
+}
 
-const mockBlogs = [
-  {
-    id: 1,
-    title: "Getting Started with React",
-    author: "John Doe",
-    status: "published",
-    date: "2024-03-15",
-    views: 1250,
-    category: "Technology",
-  },
-  {
-    id: 2,
-    title: "The Future of Web Development",
-    author: "Jane Smith",
-    status: "draft",
-    date: "2024-03-14",
-    views: 0,
-    category: "Technology",
-  },
-  {
-    id: 3,
-    title: "Design Principles for Modern Apps",
-    author: "Mike Johnson",
-    status: "published",
-    date: "2024-03-13",
-    views: 890,
-    category: "Design",
-  },
-  {
-    id: 4,
-    title: "Understanding TypeScript",
-    author: "John Doe",
-    status: "published",
-    date: "2024-03-12",
-    views: 2100,
-    category: "Technology",
-  },
-  {
-    id: 5,
-    title: "CSS Grid vs Flexbox",
-    author: "Sarah Wilson",
-    status: "published",
-    date: "2024-03-11",
-    views: 1560,
-    category: "CSS",
-  },
-]
+type Blog = {
+  _id: string
+  title: string
+  category: string
+  status: string
+  views: number
+  createdAt: string
+  user: {
+    name: string
+  }
+}
 
 export default function AdminPanel() {
-  const [users, setUsers] = useState(mockUsers)
-  const [blogs, setBlogs] = useState(mockBlogs)
+  const [users, setUsers] = useState<User[]>([])
+  const [blogs, setBlogs] = useState<Blog[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [editingUser, setEditingUser] = useState<any>(null)
-  const [editingBlog, setEditingBlog] = useState<any>(null)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [editingBlog, setEditingBlog] = useState<Blog | null>(null)
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('/api/v1/getAllUser')
+        setUsers(response.data.data)
+      } catch (error) {
+        console.error('Error fetching users:', error)
+        toast({
+          title: "Error",
+          description: "Failed to fetch users.",
+          variant: "destructive",
+        })
+      }
+    }
+
+    const fetchBlogs = async () => {
+      try {
+        const response = await axios.get('/api/v2/blogs')
+        setBlogs(response.data.data)
+      } catch (error) {
+        console.error('Error fetching blogs:', error)
+        toast({
+          title: "Error",
+          description: "Failed to fetch blogs.",
+          variant: "destructive",
+        })
+      }
+    }
+
+    fetchUsers()
+    fetchBlogs()
+  }, [])
 
   const totalUsers = users.length
   const totalBlogs = blogs.length
-  const activeUsers = users.filter((user) => user.status === "active").length
+  const activeUsers = users.length // Assuming all fetched users are active
   const publishedBlogs = blogs.filter((blog) => blog.status === "published").length
 
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const filteredBlogs = blogs.filter(
     (blog) =>
       blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.author.toLowerCase().includes(searchTerm.toLowerCase()),
+      blog.user.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const handleDeleteUser = (userId: number) => {
-    setUsers(users.filter((user) => user.id !== userId))
+  interface HandleDeleteUser {
+    (userId: string): void
   }
 
-  const handleDeleteBlog = (blogId: number) => {
-    setBlogs(blogs.filter((blog) => blog.id !== blogId))
+  const handleDeleteUser: HandleDeleteUser = (userId) => {
+    setUsers(users.filter((user) => user._id !== userId))
+    toast({
+      title: "User deleted",
+      description: "The user has been deleted successfully (client-side only).",
+    })
   }
 
-  const handleEditUser = (user: any) => {
+  interface HandleDeleteBlog {
+    (blogId: string): void
+  }
+
+  const handleDeleteBlog: HandleDeleteBlog = (blogId) => {
+    setBlogs(blogs.filter((blog) => blog._id !== blogId))
+    toast({
+      title: "Blog deleted",
+      description: "The blog has been deleted successfully (client-side only).",
+    })
+  }
+
+  interface HandleEditUser {
+    (user: User): void
+  }
+
+  const handleEditUser: HandleEditUser = (user) => {
     setEditingUser(user)
   }
 
-  const handleEditBlog = (blog: any) => {
+  interface HandleEditBlog {
+    (blog: Blog): void
+  }
+
+  const handleEditBlog: HandleEditBlog = (blog) => {
     setEditingBlog(blog)
   }
 
-  const handleSaveUser = (updatedUser: any) => {
-    setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)))
-    setEditingUser(null)
+  interface HandleSaveUser {
+    (updatedUser: User): void
   }
 
-  const handleSaveBlog = (updatedBlog: any) => {
-    setBlogs(blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)))
+  const handleSaveUser: HandleSaveUser = (updatedUser) => {
+    setUsers(users.map((user) => (user._id === updatedUser._id ? updatedUser : user)))
+    setEditingUser(null)
+    toast({
+      title: "User updated",
+      description: "The user has been updated successfully (client-side only).",
+    })
+  }
+
+  interface HandleSaveBlog {
+    (updatedBlog: Blog): void
+  }
+
+  const handleSaveBlog: HandleSaveBlog = (updatedBlog) => {
+    setBlogs(blogs.map((blog) => (blog._id === updatedBlog._id ? updatedBlog : blog)))
     setEditingBlog(null)
+    toast({
+      title: "Blog updated",
+      description: "The blog has been updated successfully (client-side only).",
+    })
   }
 
   return (
-    <div className="min-h-screen    ">
+    <div className="min-h-screen">
       {/* Sidebar */}
       <div className="fixed left-0 top-0 h-full w-64 bg-slate-800 border-r border-slate-700">
         <div className="p-6">
@@ -224,7 +231,7 @@ export default function AdminPanel() {
       </div>
 
       {/* Main Content */}
-      <div className=" p-8">
+      <div className="p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Admin Panel</h1>
           <p className="text-slate-400">Manage users and their blog posts</p>
@@ -261,7 +268,7 @@ export default function AdminPanel() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">{activeUsers}</div>
-              <p className="text-xs text-slate-400">{((activeUsers / totalUsers) * 100).toFixed(1)}% of total</p>
+              <p className="text-xs text-slate-400">{totalUsers > 0 ? ((activeUsers / totalUsers) * 100).toFixed(1) : 0}% of total</p>
             </CardContent>
           </Card>
 
@@ -272,7 +279,7 @@ export default function AdminPanel() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">{publishedBlogs}</div>
-              <p className="text-xs text-slate-400">{((publishedBlogs / totalBlogs) * 100).toFixed(1)}% published</p>
+              <p className="text-xs text-slate-400">{totalBlogs > 0 ? ((publishedBlogs / totalBlogs) * 100).toFixed(1) : 0}% published</p>
             </CardContent>
           </Card>
         </div>
@@ -328,80 +335,88 @@ export default function AdminPanel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredUsers.map((user) => (
-                      <TableRow key={user.id} className="border-slate-700">
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={user.avatar || "/placeholder.svg"} />
-                              <AvatarFallback className="bg-slate-600 text-white">
-                                {user.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className="font-medium text-white">{user.name}</div>
-                              <div className="text-sm text-slate-400">{user.email}</div>
+                    {filteredUsers.length > 0 ? (
+                      filteredUsers.map((user) => (
+                        <TableRow key={user._id} className="border-slate-700">
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={user.profileImage || "/placeholder.svg"} />
+                                <AvatarFallback className="bg-slate-600 text-white">
+                                  {user.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium text-white">{user.name}</div>
+                                <div className="text-sm text-slate-400">{user.email}</div>
+                              </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={user.status === "active" ? "default" : "secondary"}>{user.status}</Badge>
-                        </TableCell>
-                        <TableCell className="text-slate-300">{user.joinDate}</TableCell>
-                        <TableCell className="text-slate-300">{user.blogCount}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
-                              <DropdownMenuItem
-                                onClick={() => handleEditUser(user)}
-                                className="text-slate-300 hover:text-white hover:bg-slate-700"
-                              >
-                                <Edit className="w-4 h-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
-                                    className="text-red-400 hover:text-red-300 hover:bg-slate-700"
-                                  >
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent className="bg-slate-800 border-slate-700">
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-white">Delete User</AlertDialogTitle>
-                                    <AlertDialogDescription className="text-slate-400">
-                                      Are you sure you want to delete {user.name}? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel className="bg-slate-700 text-white border-slate-600 hover:bg-slate-600">
-                                      Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteUser(user.id)}
-                                      className="bg-red-600 hover:bg-red-700"
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="default">active</Badge> {/* API doesn't provide status, assuming active */}
+                          </TableCell>
+                          <TableCell className="text-slate-300">N/A</TableCell> {/* Join date not provided */}
+                          <TableCell className="text-slate-300">{user.blogs.length}</TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+                                <DropdownMenuItem
+                                  onClick={() => handleEditUser(user)}
+                                  className="text-slate-300 hover:text-white hover:bg-slate-700"
+                                >
+                                  <Edit className="w-4 h-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                      onSelect={(e) => e.preventDefault()}
+                                      className="text-red-400 hover:text-red-300 hover:bg-slate-700"
                                     >
+                                      <Trash2 className="w-4 h-4 mr-2" />
                                       Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="bg-slate-800 border-slate-700">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-white">Delete User</AlertDialogTitle>
+                                      <AlertDialogDescription className="text-slate-400">
+                                        Are you sure you want to delete {user.name}? This action cannot be undone (client-side only).
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel className="bg-slate-700 text-white border-slate-600 hover:bg-slate-600">
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDeleteUser(user._id)}
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center text-slate-400">
+                          No users found
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -436,70 +451,78 @@ export default function AdminPanel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredBlogs.map((blog) => (
-                      <TableRow key={blog.id} className="border-slate-700">
-                        <TableCell>
-                          <div>
-                            <div className="font-medium text-white">{blog.title}</div>
-                            <div className="text-sm text-slate-400">{blog.category}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-slate-300">{blog.author}</TableCell>
-                        <TableCell>
-                          <Badge variant={blog.status === "published" ? "default" : "secondary"}>{blog.status}</Badge>
-                        </TableCell>
-                        <TableCell className="text-slate-300">{blog.views.toLocaleString()}</TableCell>
-                        <TableCell className="text-slate-300">{blog.date}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
-                              <DropdownMenuItem
-                                onClick={() => handleEditBlog(blog)}
-                                className="text-slate-300 hover:text-white hover:bg-slate-700"
-                              >
-                                <Edit className="w-4 h-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
-                                    className="text-red-400 hover:text-red-300 hover:bg-slate-700"
-                                  >
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent className="bg-slate-800 border-slate-700">
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-white">Delete Blog Post</AlertDialogTitle>
-                                    <AlertDialogDescription className="text-slate-400">
-                                      Are you sure you want to delete "{blog.title}"? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel className="bg-slate-700 text-white border-slate-600 hover:bg-slate-600">
-                                      Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteBlog(blog.id)}
-                                      className="bg-red-600 hover:bg-red-700"
+                    {filteredBlogs.length > 0 ? (
+                      filteredBlogs.map((blog) => (
+                        <TableRow key={blog._id} className="border-slate-700">
+                          <TableCell>
+                            <div>
+                              <div className="font-medium text-white">{blog.title}</div>
+                              <div className="text-sm text-slate-400">{blog.category}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-slate-300">{blog.user.name}</TableCell>
+                          <TableCell>
+                            <Badge variant={blog.status === "published" ? "default" : "secondary"}>{blog.status}</Badge>
+                          </TableCell>
+                          <TableCell className="text-slate-300">{blog.views?.toLocaleString()}</TableCell>
+                          <TableCell className="text-slate-300">{new Date(blog.createdAt).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+                                <DropdownMenuItem
+                                  onClick={() => handleEditBlog(blog)}
+                                  className="text-slate-300 hover:text-white hover:bg-slate-700"
+                                >
+                                  <Edit className="w-4 h-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                      onSelect={(e) => e.preventDefault()}
+                                      className="text-red-400 hover:text-red-300 hover:bg-slate-700"
                                     >
+                                      <Trash2 className="w-4 h-4 mr-2" />
                                       Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="bg-slate-800 border-slate-700">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-white">Delete Blog Post</AlertDialogTitle>
+                                      <AlertDialogDescription className="text-slate-400">
+                                        Are you sure you want to delete "{blog.title}"? This action cannot be undone (client-side only).
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel className="bg-slate-700 text-white border-slate-600 hover:bg-slate-600">
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDeleteBlog(blog._id)}
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center text-slate-400">
+                          No blogs found
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -543,7 +566,12 @@ export default function AdminPanel() {
               </div>
             )}
             <DialogFooter>
-              <Button onClick={() => handleSaveUser(editingUser)} className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                onClick={() => {
+                  if (editingUser) handleSaveUser(editingUser)
+                }}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
                 Save changes
               </Button>
             </DialogFooter>
@@ -584,7 +612,12 @@ export default function AdminPanel() {
               </div>
             )}
             <DialogFooter>
-              <Button onClick={() => handleSaveBlog(editingBlog)} className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                onClick={() => {
+                  if (editingBlog) handleSaveBlog(editingBlog)
+                }}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
                 Save changes
               </Button>
             </DialogFooter>
