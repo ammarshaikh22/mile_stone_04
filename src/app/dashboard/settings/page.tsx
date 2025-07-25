@@ -8,8 +8,6 @@ export default function SettingsPage() {
       <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
 
       <div className="space-y-8">
-        <AccountSettings />
-        <Separator />
         <PasswordForm />
       </div>
     </div>
