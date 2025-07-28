@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import axios from "@/lib/axios"
 import { Button } from "@/components/ui/button"
@@ -95,7 +94,7 @@ export default function AdminPanel() {
 
   const totalUsers = users.length
   const totalBlogs = blogs.length
-  const activeUsers = users.length // Assuming all fetched users are active
+  const activeUsers = users.length
   const publishedBlogs = blogs.filter((blog) => blog.status === "published").length
 
   const filteredUsers = users.filter(
@@ -103,7 +102,6 @@ export default function AdminPanel() {
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
-
   const filteredBlogs = blogs.filter(
     (blog) =>
       blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -359,7 +357,7 @@ export default function AdminPanel() {
                             <Badge variant="default">active</Badge> {/* API doesn't provide status, assuming active */}
                           </TableCell>
                           <TableCell className="text-slate-300">N/A</TableCell> {/* Join date not provided */}
-                          <TableCell className="text-slate-300">{user.blogs.length}</TableCell>
+                         
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
