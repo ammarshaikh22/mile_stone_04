@@ -17,18 +17,22 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useEffect, useState } from "react"
 
 export function DashboardSidebar() {
   const pathname = usePathname()
   const isMobile = useIsMobile()
-
+  const [Admin, setAdmin] = useState(false)
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(`${path}/`)
   }
-  const Admin = localStorage.getItem("userDetails")
-  ? JSON.parse(localStorage.getItem("userDetails") || "{}").isAdmin
-  : false;
-  console.log("Admin", Admin)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const admin = localStorage.getItem("userDetails")
+    ? JSON.parse(localStorage.getItem("userDetails") || "{}").isAdmin
+    : false;
+    setAdmin(admin)
+  },[])
   return (
     <>
       {isMobile && (

@@ -1,6 +1,6 @@
 import { PostsList } from "@/components/posts-list"
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent} from "@/components/ui/tabs"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
 

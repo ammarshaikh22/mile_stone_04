@@ -9,7 +9,6 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
         const response = await axios.get('/api/v1/getUser', {
           headers: {
             Authorization: localStorage.getItem('token')
