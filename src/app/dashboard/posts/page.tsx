@@ -2,6 +2,7 @@ import { PostsList } from "@/components/posts-list"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PlusCircle } from "lucide-react"
+import Link from "next/link"
 
 export default function PostsPage() {
   return (
@@ -10,7 +11,9 @@ export default function PostsPage() {
         <h1 className="text-3xl font-bold">Posts</h1>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
-          New Post
+        <Link href={"/create"}>
+          Add New Post
+        </Link>
         </Button>
       </div>
       <Tabs defaultValue="published">

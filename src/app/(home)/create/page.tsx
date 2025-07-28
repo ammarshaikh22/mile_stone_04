@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImagePlus, X, Plus, Trash2 } from "lucide-react";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { ToastContainer, toast } from "react-toastify";
 import { Bars } from "react-loader-spinner";
 interface SubSection {
@@ -95,7 +95,7 @@ export default function CreateBlogPage() {
     try {
       setLoading(true);
       const res = await axios.post(
-        "https://ai-blogs.up.railway.app/api/v2/addBlog",
+        "/api/v2/addBlog",
         formData,
         {
           headers: {
