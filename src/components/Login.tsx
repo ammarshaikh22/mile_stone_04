@@ -21,9 +21,16 @@ const Login = () => {
                 return
             }
             setLoader(true)
-            const res = await axios.post('/api/v1/login'
-                , { email, password })
-            localStorage.setItem('token', res.data.token)
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            })
+            const data = await res.json()
+
+            localStorage.setItem('token', data.token)
             if (res.status === 200) return route.push('/')
         } catch (error: any) {
             if (error.response.data.message === 'please verify your email') {
