@@ -61,7 +61,6 @@ const Header = () => {
       console.log(error);
     }
   };
-  console.log(user)
   return (
     <header className="sticky top-0 z-50 dark:bg-[#111827] md:py-0 py-4 bg-white shadow-lg">
       <div className="mx-auto 2xl:max-w-[1440px]">

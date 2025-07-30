@@ -144,7 +144,6 @@ export default function GalleryPage() {
       toast.error("Failed to update blog");
     }
   };
-
   return (
     <div className="text-white p-4 md:p-6">
       <ToastContainer
@@ -210,7 +209,7 @@ export default function GalleryPage() {
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.map((post: any, index: number) => (
+          {data.lenght > 0 ? data.map((post: any, index: number) => (
             <Card
               className="bg-[#111827] rounded-[30px] overflow-hidden"
               key={index}
@@ -300,7 +299,7 @@ export default function GalleryPage() {
               </CardContent>
               <CardFooter className="p-3 pt-0"></CardFooter>
             </Card>
-          ))}
+          )):<div className="">No Blogs</div>}
         </div>
 
         {/* Delete Dialog */}
