@@ -7,7 +7,7 @@ import { AboutTimeline } from "@/components/about-timeline"
 
 export default function AboutPage() {
   return (
-    <div className=" ">
+    <div>
       <AboutHero />
       <AboutMission />
       <AboutStats />

@@ -37,9 +37,7 @@ function StatItem({ number, label, suffix = "", prefix = "" }: StatItemProps) {
 
 export function AboutStats() {
   return (
-    <section className="py-20 relative overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(68,68,68,.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px]" />
+    <section className="py-20 bg-[url('/about2.pg')] bg-cover bg-no-repeat bg-center relative overflow-hidden">
 
       <div className="max-w-[90%] mx-auto relative z-10">
         <div className="text-center mb-16">
@@ -49,7 +47,7 @@ export function AboutStats() {
           </p>
         </div>
 
-        <Card className="max-w-4xl mx-auto bg-gradient-to-r from-background/80 to-background/60 backdrop-blur-sm border-white/10">
+        <Card className=" mx-auto bg-transparent">
           <CardContent className="p-8 md:p-12">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <StatItem number={500} suffix="+" label="Projects Completed" />

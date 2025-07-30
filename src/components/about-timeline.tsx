@@ -156,7 +156,7 @@ export function AboutTimeline() {
                   {/* Content */}
                   <div className={`w-full md:w-1/2 ${index % 2 === 0 ? "md:pr-8" : "md:pl-8"} ml-12 md:ml-0`}>
                     <Card
-                      className={`group hover:shadow-xl transition-all duration-500 bg-gradient-to-br from-card to-card/50 border-0 hover:from-card hover:to-muted/20 ${
+                      className={`group hover:shadow-xl transition-all duration-500  ${
                         visibleItems.includes(index) ? "hover:scale-105" : ""
                       }`}
                     >

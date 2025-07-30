@@ -13,7 +13,7 @@ export function AboutMission() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5 hover:from-blue-500/20 hover:to-blue-600/10">
+          <Card className="group  transition-all duration-300 border-0 ">
             <CardContent className="p-8 text-center">
               <div className="mb-6 relative">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -28,7 +28,7 @@ export function AboutMission() {
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5 hover:from-purple-500/20 hover:to-purple-600/10">
+          <Card className="group transition-all duration-300 border-0 ">
             <CardContent className="p-8 text-center">
               <div className="mb-6 relative">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -43,7 +43,7 @@ export function AboutMission() {
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-pink-500/10 to-pink-600/5 hover:from-pink-500/20 hover:to-pink-600/10">
+          <Card className="group transition-all duration-300 border-0">
             <CardContent className="p-8 text-center">
               <div className="mb-6 relative">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">

@@ -54,7 +54,7 @@ export function AboutTeam() {
           {teamMembers.map((member, index) => (
             <Card
               key={index}
-              className="group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-b from-card to-card/50 hover:from-card hover:to-muted/20"
+              className="group hover:shadow-2xl transition-all duration-300 border-0 "
             >
               <CardContent className="p-6 text-center">
                 <div className="mb-6">

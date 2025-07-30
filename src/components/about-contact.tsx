@@ -65,7 +65,7 @@ export function AboutContact() {
           </div>
 
           {/* Contact Form */}
-          <Card className="bg-gradient-to-br from-card to-card/50 border-0">
+          <Card className=" border-0">
             <CardContent className="p-8">
               <form className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
