@@ -4,12 +4,9 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const response = await axios(`/api/v1/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+  const response = await axios.post(`/api/v1/login`, {
+    email: body.email,
+    password: body.password
   });
 
   const rawCookie = response.headers['set-cookie'];

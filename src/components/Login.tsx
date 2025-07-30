@@ -29,7 +29,6 @@ const Login = () => {
                 body: JSON.stringify({ email, password }),
             })
             const data = await res.json()
-
             localStorage.setItem('token', data.token)
             if (res.status === 200) return route.push('/')
         } catch (error: any) {
