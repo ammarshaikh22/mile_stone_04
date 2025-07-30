@@ -458,7 +458,7 @@ export default function AdminPanel() {
                               <div className="text-sm text-slate-400">{blog.category}</div>
                             </div>
                           </TableCell>
-                          <TableCell className="text-slate-300">{blog.user.name}</TableCell>
+                          <TableCell className="text-slate-300">{blog.user?.name}</TableCell>
                           <TableCell>
                             <Badge variant={blog.status === "published" ? "default" : "secondary"}>{blog.status}</Badge>
                           </TableCell>

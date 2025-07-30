@@ -7,94 +7,114 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 import ScaleLoader from "react-spinners/ScaleLoader";
-import axios from '@/lib/axios';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loader, setLoader] = useState(false)
+    const [message, setMessage] = useState('')
+    const [messageType, setMessageType] = useState('') // 'error' or 'success'
+    const [showPassword, setShowPassword] = useState(false)
     const route = useRouter()
 
     const login = async () => {
         try {
             if (!email || !password) {
-                alert('Please enter email and password')
+                setMessage('Please enter email and password')
+                setMessageType('error')
                 return
             }
             setLoader(true)
             const res = await fetch('/api/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({ email, password }),
             })
             const data = await res.json()
             localStorage.setItem('token', data.token)
-            if (res.status === 200) return route.push('/')
-        } catch (error: any) {
-            if (error.response.data.message === 'please verify your email') {
-                alert(error.response.data.message)
-                route.push('/verifyemail')
-            } else if (error.response.data.message === 'user not found') {
-                alert(error.response.data.message)
-                route.push('/signup')
-            } else {
-                alert(error.response.data.message)
+            if (res.status === 200) {
+                setMessage('Login successful! Redirecting...')
+                setMessageType('success')
+                setTimeout(() => route.push('/'), 1000) 
+            }
+        } catch (error:any) {
+            const backendMessage = error.response?.data?.message || 'Something went wrong'
+            setMessage(backendMessage)
+            setMessageType('error')
+            if (backendMessage === 'please verify your email') {
+                setTimeout(() => route.push('/verifyemail'), 2000)
+            } else if (backendMessage === 'user not found') {
+                setTimeout(() => route.push('/signup'), 2000)
             }
         } finally {
             setLoader(false)
         }
     }
+
     return (
         <div>
-            {
-                loader ?
-                    <div className='flex justify-center items-center h-screen'>
-                        <ScaleLoader
-                            color='blue'
-                            aria-label="Loading Spinner"
-                            data-testid="loader"
-                        />
-                    </div> :
-                    <div className="w-full mx-auto shadow-input bg-transparent px-4 sm:px-6 lg:px-8">
-                        <div className="w-full flex justify-end mb-6">
-                            <Link href='/signup'><Button variant={"ghost"}>Signup</Button></Link>
+            {loader ? (
+                <div className='flex justify-center items-center h-screen'>
+                    <ScaleLoader color='blue' aria-label="Loading Spinner" data-testid="loader" />
+                </div>
+            ) : (
+                <div className="w-full mx-auto shadow-input bg-transparent px-4 sm:px-6 lg:px-8">
+                    <div className="w-full flex justify-end mb-6">
+                        <Link href='/signup'><Button variant={"ghost"}>Signup</Button></Link>
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2 text-center">Login to your account</h2>
+                    <p className='dark:text text-md text-center mb-2'>Enter your email below to Login to your account</p>
+                    {message && (
+                        <div className={`text-center mb-4 ${messageType === 'error' ? 'text-red-500' : 'text-green-500'}`}>
+                            {message}
                         </div>
-                        <h2 className="text-3xl font-bold text-white mb-2 text-center">Login to your account</h2>
-                        <p className='dark:text text-md text-center mb-2'>Enter your email below to Login to your account</p>
-                        <form onClick={(e) => e.preventDefault()} className="my-8" >
-                            <LabelInputContainer className="mb-6">
-                                <Label htmlFor="email">Email Address</Label>
-                                <Input
-                                    id="email"
-                                    placeholder="projectmayhem@fc.com"
-                                    type="email"
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full"
-                                />
-                            </LabelInputContainer>
-                            <LabelInputContainer className="mb-6">
-                                <Label htmlFor="password">Password</Label>
+                    )}
+                    <form onClick={(e) => e.preventDefault()} className="my-8">
+                        <LabelInputContainer className="mb-6">
+                            <Label htmlFor="email">Email Address</Label>
+                            <Input
+                                id="email"
+                                placeholder="projectmayhem@fc.com"
+                                type="email"
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full"
+                            />
+                        </LabelInputContainer>
+                        <LabelInputContainer className="mb-6">
+                            <Label htmlFor="password">Password</Label>
+                            <div className="relative">
                                 <Input
                                     id="password"
                                     placeholder="••••••••"
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full text-white"
+                                    className="w-full text-white pr-10"
                                 />
-                            </LabelInputContainer>
-                            <button
-                                className="bg-[#111827] relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-                                type="submit"
-                                onClick={login}
-                            >
-                                Login &rarr;
-                                <BottomGradient />
-                            </button>
-                            <p className='text-sm text-white mt-6 text-center'>Don&apos;t have an account? <Link href='/signup'>Sign Up</Link></p>
-                        </form>
-                    </div>
-            }
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                                >
+                                    {showPassword ? (
+                                        <EyeOffIcon className="h-5 w-5 text-gray-400" />
+                                    ) : (
+                                        <EyeIcon className="h-5 w-5 text-gray-400" />
+                                    )}
+                                </button>
+                            </div>
+                        </LabelInputContainer>
+                        <button
+                            className="bg-[#111827] relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+                            type="submit"
+                            onClick={login}
+                        >
+                            Login &rarr;
+                            <BottomGradient />
+                        </button>
+                        <p className='text-sm text-white mt-6 text-center'>Don&apos;t have an account? <Link href='/signup'>Sign Up</Link></p>
+                    </form>
+                </div>
+            )}
         </div>
     )
 }
@@ -111,14 +131,12 @@ const BottomGradient = () => {
 const LabelInputContainer = ({
     children,
     className,
-}: {
-    children: React.ReactNode;
-    className?: string;
-}) => {
+}:any) => {
     return (
         <div className={cn("flex flex-col space-y-2 w-full", className)}>
             {children}
         </div>
     );
 };
+
 export default Login
