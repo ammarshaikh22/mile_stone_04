@@ -209,7 +209,7 @@ export default function GalleryPage() {
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.lenght > 0 ? data.map((post: any, index: number) => (
+          {data.lenght !== 0 ? data.map((post: any, index: number) => (
             <Card
               className="bg-[#111827] rounded-[30px] overflow-hidden"
               key={index}
